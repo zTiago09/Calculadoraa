@@ -1,16 +1,13 @@
-#ifndef EXPRESSAO_H
 
+#ifndef EXPRESSAO_H
 #define EXPRESSAO_H
 
 typedef struct {
-
-    char posFixa[512];     
-    char inFixa[512];      
-    float Valor;          
-
+    char posFixa[512];
+    char inFixa[512];
+    double Valor;
 } Expressao;
 
-char *getFormaInFixa(char *Str);    
-float getValor(char *Str);          
+void converterPosfixaParaInfixaECalcular(Expressao *expr);
 
 #endif
