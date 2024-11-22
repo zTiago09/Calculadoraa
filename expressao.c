@@ -1,9 +1,14 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
 #include "expressao.h"
+
+#ifndef M_PI
+#define M_PI 3.141592653589793
+#endif
 
 typedef struct Item {
     char expressao[512]; 
@@ -16,14 +21,12 @@ typedef struct {
     int Tamanho;
 } Pilha;
 
-
 Pilha *criarPilha();
 int estaVazia(Pilha *P);
 Item *criarItem(const char *str, double valor);
 void empilhar(Pilha *P, Item *I);
 Item *desempilhar(Pilha *P);
 void liberarPilha(Pilha *P);
-
 
 Pilha *criarPilha() {
     Pilha *MinhaPilha = (Pilha *)malloc(sizeof(Pilha));
@@ -95,26 +98,21 @@ void converterPosfixaParaInfixaECalcular(Expressao *expressao) {
             char operando[32];
             int j = 0;
 
-            
             while (isdigit(posFixa[i]) || posFixa[i] == '.' || (j == 0 && posFixa[i] == '-')) {
                 operando[j++] = posFixa[i++];
             }
             operando[j] = '\0';
 
-            
             double valor = atof(operando);
             empilhar(P, criarItem(operando, valor));
         }
         
         else if (strchr("+-*/^", posFixa[i]) != NULL) {
-            
             Item *op2 = desempilhar(P);
             Item *op1 = desempilhar(P);
 
-            
             snprintf(temp, sizeof(temp), "(%s %c %s)", op1->expressao, posFixa[i], op2->expressao);
 
-            
             double resultado = 0.0;
             switch (posFixa[i]) {
                 case '+':
@@ -139,7 +137,6 @@ void converterPosfixaParaInfixaECalcular(Expressao *expressao) {
                     break;
             }
 
-            
             empilhar(P, criarItem(temp, resultado));
         }
         
@@ -151,19 +148,19 @@ void converterPosfixaParaInfixaECalcular(Expressao *expressao) {
             empilhar(P, criarItem(temp, resultado));
         }
         else if (posFixa[i] == 's' && posFixa[i+1] == 'e') { 
-    i += 2; 
-    Item *op = desempilhar(P);
-    snprintf(temp, sizeof(temp), "sen(%s)", op->expressao);
-    double resultado = sin(op->valor * M_PI / 180.0); 
-    empilhar(P, criarItem(temp, resultado));
-}
-else if (posFixa[i] == 'c' && posFixa[i+1] == 'o') { 
-    i += 2; 
-    Item *op = desempilhar(P);
-    snprintf(temp, sizeof(temp), "cos(%s)", op->expressao);
-    double resultado = cos(op->valor * M_PI / 180.0); 
-    empilhar(P, criarItem(temp, resultado));
-}
+            i += 2; 
+            Item *op = desempilhar(P);
+            snprintf(temp, sizeof(temp), "sen(%s)", op->expressao);
+            double resultado = sin(op->valor * M_PI / 180.0); 
+            empilhar(P, criarItem(temp, resultado));
+        }
+        else if (posFixa[i] == 'c' && posFixa[i+1] == 'o') { 
+            i += 2; 
+            Item *op = desempilhar(P);
+            snprintf(temp, sizeof(temp), "cos(%s)", op->expressao);
+            double resultado = cos(op->valor * M_PI / 180.0); 
+            empilhar(P, criarItem(temp, resultado));
+        }
         else if (posFixa[i] == 't') { 
             i++; 
             Item *op = desempilhar(P);
@@ -178,10 +175,9 @@ else if (posFixa[i] == 'c' && posFixa[i+1] == 'o') {
             double resultado = log10(op->valor);
             empilhar(P, criarItem(temp, resultado));
         }
-            i++;
-        }
+        i++;
+    }
 
-    
     Item *finalItem = desempilhar(P);
     if (finalItem) {
         expressao->Valor = finalItem->valor;
